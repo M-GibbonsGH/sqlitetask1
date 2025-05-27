@@ -5,7 +5,7 @@
 import sqlite3
 import pandas as pd
 
-df = pd.read_csv("C:/Users/matth/Documents/POST-BATTERYISSUE_Files_removed_from_P16vG2/PythonProjects/sqlitetask1/shoes.csv")                               # Create pandas DataFrame out of a csv file
+df = pd.read_csv("sqlitetask1/shoes.csv")                               # Create pandas DataFrame out of a csv file
 
 conn = sqlite3.connect("shoes.db")                          # Create connection to an sqlite database (if none with that name, it's created)
 

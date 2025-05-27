@@ -5,7 +5,7 @@
 import sqlite3
 import pandas as pd
 
-df = pd.read_csv("shoes.csv")                               # Create pandas DataFrame out of a csv file
+df = pd.read_csv("C:/Users/matth/Documents/POST-BATTERYISSUE_Files_removed_from_P16vG2/PythonProjects/sqlitetask1/shoes.csv")                               # Create pandas DataFrame out of a csv file
 
 conn = sqlite3.connect("shoes.db")                          # Create connection to an sqlite database (if none with that name, it's created)
 
@@ -38,16 +38,15 @@ conn.commit()
 # Statement == one SQL command
 # Transaction == grouping of multiple SQL statments that sqlite will treat as a single unit
 
-# I'm getting a ProgrammingError ("can only execute 1 statement at a time") when trying to 
-# execute a transaction (which takes the syntax BEGIN; statement 1; statement 2; ...; COMMIT/ROLLBACK) 
-cursor.execute("""BEGIN; 
-               UPDATE shoes_table SET Model = 'Ultrafly' WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE BRAND = 'Topo' LIMIT 10 OFFSET 10);
+# seems that you cannot have Offset by itself: must be limit...offset, otherwise error 
+cursor.execute("UPDATE shoes_table SET Model = 'Ultrafly' WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE BRAND = 'Topo' LIMIT 10 OFFSET 10)");
                
-               UPDATE shoes_table SET Sex = 'Female' WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE Brand = 'Topo' LIMIT 5 OFFSET 10);
+cursor.execute("UPDATE shoes_table SET Sex = 'Female' WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE Brand = 'Topo' LIMIT 5 OFFSET 10)");
                
-               UPDATE shoes_table SET Sex = 'Male' WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE Brand = 'Topo' OFFSET 15);
+cursor.execute("UPDATE shoes_table SET Sex = 'Male' WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE Brand = 'Topo' LIMIT 5 OFFSET 15)");
+
                
-               COMMIT""")
+conn.commit()
 
 q = pd.read_sql_query("SELECT * FROM shoes_table WHERE Brand = 'Topo'", conn)
 print(q)

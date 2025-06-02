@@ -14,7 +14,7 @@ df.to_sql("shoes_table", conn, if_exists='replace')          # Write the DataFra
 
 cursor = conn.cursor()                                       # To modify the table (rather than just query it), we need to use a new class instance, cursor
 
-# Below, inserting 20 new rows into the table, and populating a single column with the same value for each row. Recursive common table expression.
+# Below, inserting 20 new rows into the table, and populating a single column with the same value for each row, using recursive cte.
 
 cursor.execute("""WITH RECURSIVE rec_cte(n) AS (select 1 union all select n + 1 from rec_cte where n < 20) INSERT INTO shoes_table (Brand) SELECT "Topo" from rec_cte""")
                                                         # IMPORTANT: two different syntaxes appear to work fine: 'instantiating' the cte can come before OR after the insert clause
@@ -22,7 +22,6 @@ cursor.execute("""WITH RECURSIVE rec_cte(n) AS (select 1 union all select n + 1 
 conn.commit()
 
 
-# Below I'm modifying (updating) existing rows, not adding new ones. So no recursive CTE needed: instead an UPDATE clause
 # LIMIT clause works in MySQL, but NOT in Postgres or SQLite. For the latter two, you can instead use subclause "where rowid in (select ...)" 
 
 cursor.execute("""UPDATE shoes_table SET Model = "Atmos" WHERE ROWID IN (SELECT ROWID FROM shoes_table WHERE Brand = "Topo" LIMIT 10)""");
@@ -56,3 +55,7 @@ print(q)
 conn.close()
 
 # so next to find out: why are the added rows not indexed? They should be
+
+# update original csv as well?
+
+# generate synthetic sales data?
